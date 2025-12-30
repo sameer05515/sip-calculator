@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIP Calculator - Systematic Investment Plan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body class="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 min-h-screen">
+    <div x-data="sipCalculator()" class="container mx-auto px-4 py-8 max-w-4xl">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-gray-800 mb-2">
+                <span class="text-blue-600">📈</span> SIP Calculator
+            </h1>
+            <p class="text-gray-600">Calculate your Systematic Investment Plan returns</p>
+        </div>
+
+        <!-- Main Card -->
+        <div class="bg-white rounded-2xl shadow-xl p-8 mb-6">
+            <!-- Input Form -->
+            <div class="grid md:grid-cols-3 gap-6 mb-8">
+                <!-- Monthly SIP Amount -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                        Monthly SIP Amount (₹)
+                    </label>
+                    <input 
+                        type="number" 
+                        x-model="monthlyAmount" 
+                        @input="calculate()"
+                        placeholder="5000"
+                        min="0"
+                        step="100"
+                        class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-lg"
+                    >
+                </div>
+
+                <!-- Expected Annual Return -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                        Expected Annual Return (%)
+                    </label>
+                    <input 
+                        type="number" 
+                        x-model="annualReturn" 
+                        @input="calculate()"
+                        placeholder="12"
+                        min="0"
+                        max="100"
+                        step="0.1"
+                        class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-lg"
+                    >
+                </div>
+
+                <!-- Investment Period -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                        Investment Period (Years)
+                    </label>
+                    <input 
+                        type="number" 
+                        x-model="years" 
+                        @input="calculate()"
+                        placeholder="10"
+                        min="1"
+                        max="50"
+                        step="1"
+                        class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-lg"
+                    >
+                </div>
+            </div>
+
+            <!-- Results -->
+            <div x-show="results.totalValue > 0" 
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 transform scale-95"
+                 x-transition:enter-end="opacity-100 transform scale-100"
+                 class="space-y-4">
+                
+                <!-- Total Value Card -->
+                <div class="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl p-6 text-white">
+                    <div class="text-center">
+                        <p class="text-lg font-semibold mb-2">Total Value</p>
+                        <p class="text-5xl font-bold mb-2">
+                            ₹<span x-text="formatCurrency(results.totalValue)"></span>
+                        </p>
+                        <p class="text-lg font-medium mt-3 opacity-90">
+                            <span x-text="numberToWords(results.totalValue)"></span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="grid md:grid-cols-3 gap-4">
+                    <!-- Total Invested -->
+                    <div class="bg-gray-50 rounded-xl p-6 border-2 border-gray-200">
+                        <div class="text-center">
+                            <p class="text-sm font-semibold text-gray-600 mb-2">Total Invested</p>
+                            <p class="text-3xl font-bold text-gray-800">
+                                ₹<span x-text="formatCurrency(results.totalInvested)"></span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Estimated Returns -->
+                    <div class="bg-green-50 rounded-xl p-6 border-2 border-green-200">
+                        <div class="text-center">
+                            <p class="text-sm font-semibold text-green-700 mb-2">Estimated Returns</p>
+                            <p class="text-3xl font-bold text-green-800">
+                                ₹<span x-text="formatCurrency(results.estimatedReturns)"></span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Return Percentage -->
+                    <div class="bg-blue-50 rounded-xl p-6 border-2 border-blue-200">
+                        <div class="text-center">
+                            <p class="text-sm font-semibold text-blue-700 mb-2">Return %</p>
+                            <p class="text-3xl font-bold text-blue-800">
+                                <span x-text="results.returnPercentage.toFixed(2)"></span>%
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Breakdown -->
+                <div class="bg-gray-50 rounded-xl p-6 border-2 border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Investment Breakdown</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Monthly Investment:</span>
+                            <span class="font-semibold text-gray-800">₹<span x-text="formatCurrency(monthlyAmount)"></span></span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Number of Months:</span>
+                            <span class="font-semibold text-gray-800" x-text="results.months"></span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Monthly Return Rate:</span>
+                            <span class="font-semibold text-gray-800" x-text="results.monthlyRate.toFixed(4)"></span>%
+                        </div>
+                        <div class="border-t border-gray-300 pt-3 mt-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-800 font-semibold">Total Invested:</span>
+                                <span class="font-bold text-gray-900">₹<span x-text="formatCurrency(results.totalInvested)"></span></span>
+                            </div>
+                            <div class="flex justify-between items-center mt-2">
+                                <span class="text-gray-800 font-semibold">Wealth Gained:</span>
+                                <span class="font-bold text-green-700">₹<span x-text="formatCurrency(results.estimatedReturns)"></span></span>
+                            </div>
+                            <div class="flex justify-between items-center mt-2">
+                                <span class="text-gray-800 font-semibold">Maturity Amount:</span>
+                                <span class="font-bold text-blue-700">₹<span x-text="formatCurrency(results.totalValue)"></span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div x-show="results.totalValue === 0" class="text-center py-12 text-gray-400">
+                <p class="text-lg">Enter your SIP details above to see calculations</p>
+            </div>
+        </div>
+
+        <!-- Info Card -->
+        <div class="bg-white rounded-2xl shadow-lg p-6">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">About SIP Calculator</h2>
+            <div class="text-gray-600 space-y-2">
+                <p>
+                    A Systematic Investment Plan (SIP) is an investment strategy where you invest a fixed amount 
+                    regularly (typically monthly) in mutual funds or other investment instruments.
+                </p>
+                <p class="text-sm mt-4">
+                    <strong>Formula used:</strong> The calculator uses the future value of annuity formula:
+                    <code class="bg-gray-100 px-2 py-1 rounded text-xs">
+                        FV = P × [((1 + r)^n - 1) / r] × (1 + r)
+                    </code>
+                    where P = monthly investment, r = monthly return rate, n = number of months
+                </p>
+                <p class="text-sm text-gray-500 mt-4">
+                    <strong>Note:</strong> This is an estimate based on the expected return rate. Actual returns may vary 
+                    based on market conditions and fund performance.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function sipCalculator() {
+            return {
+                monthlyAmount: 5000,
+                annualReturn: 12,
+                years: 10,
+                results: {
+                    totalValue: 0,
+                    totalInvested: 0,
+                    estimatedReturns: 0,
+                    returnPercentage: 0,
+                    months: 0,
+                    monthlyRate: 0
+                },
+
+                calculate() {
+                    const amount = parseFloat(this.monthlyAmount) || 0;
+                    const annualRate = parseFloat(this.annualReturn) || 0;
+                    const yearsValue = parseFloat(this.years) || 0;
+
+                    if (amount <= 0 || annualRate < 0 || yearsValue <= 0) {
+                        this.resetResults();
+                        return;
+                    }
+
+                    // Calculate monthly rate
+                    const monthlyRate = annualRate / 12 / 100;
+                    const months = yearsValue * 12;
+
+                    // Calculate total invested
+                    const totalInvested = amount * months;
+
+                    // Calculate future value using SIP formula
+                    // FV = P × [((1 + r)^n - 1) / r] × (1 + r)
+                    let futureValue = 0;
+                    
+                    if (monthlyRate > 0) {
+                        const compoundFactor = Math.pow(1 + monthlyRate, months);
+                        futureValue = amount * ((compoundFactor - 1) / monthlyRate) * (1 + monthlyRate);
+                    } else {
+                        // If rate is 0, it's just the sum of all investments
+                        futureValue = totalInvested;
+                    }
+
+                    const estimatedReturns = futureValue - totalInvested;
+                    const returnPercentage = totalInvested > 0 ? (estimatedReturns / totalInvested) * 100 : 0;
+
+                    this.results = {
+                        totalValue: futureValue,
+                        totalInvested: totalInvested,
+                        estimatedReturns: estimatedReturns,
+                        returnPercentage: returnPercentage,
+                        months: months,
+                        monthlyRate: monthlyRate * 100
+                    };
+                },
+
+                resetResults() {
+                    this.results = {
+                        totalValue: 0,
+                        totalInvested: 0,
+                        estimatedReturns: 0,
+                        returnPercentage: 0,
+                        months: 0,
+                        monthlyRate: 0
+                    };
+                },
+
+                formatCurrency(num) {
+                    if (num === null || num === undefined || isNaN(num)) return '0';
+                    return parseFloat(num).toLocaleString('en-IN', { 
+                        minimumFractionDigits: 0, 
+                        maximumFractionDigits: 0 
+                    });
+                },
+
+                numberToWords(num) {
+                    if (num === null || num === undefined || isNaN(num) || num === 0) {
+                        return 'Zero Rupees';
+                    }
+
+                    const numValue = Math.floor(parseFloat(num));
+                    const parts = [];
+
+                    // Calculate Crore
+                    const crore = Math.floor(numValue / 10000000);
+                    if (crore > 0) {
+                        parts.push(crore === 1 ? '1 Crore' : `${crore} Crore`);
+                    }
+
+                    // Calculate Lakh (remaining after crore)
+                    const remainingAfterCrore = numValue % 10000000;
+                    const lakh = Math.floor(remainingAfterCrore / 100000);
+                    if (lakh > 0) {
+                        parts.push(lakh === 1 ? '1 Lakh' : `${lakh} Lakh`);
+                    }
+
+                    // Calculate Thousand (remaining after lakh)
+                    const remainingAfterLakh = remainingAfterCrore % 100000;
+                    const thousand = Math.floor(remainingAfterLakh / 1000);
+                    if (thousand > 0) {
+                        parts.push(thousand === 1 ? '1 Thousand' : `${thousand} Thousand`);
+                    }
+
+                    // Calculate remaining hundreds
+                    const remaining = remainingAfterLakh % 1000;
+                    if (remaining > 0) {
+                        parts.push(remaining.toString());
+                    }
+
+                    if (parts.length === 0) {
+                        return 'Zero Rupees';
+                    }
+
+                    return parts.join(' ') + ' Rupees';
+                },
+
+                init() {
+                    this.calculate();
+                }
+            }
+        }
+    </script>
+</body>
+</html>
+
