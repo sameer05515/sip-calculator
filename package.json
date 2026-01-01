@@ -1,0 +1,13 @@
+{
+  "name": "sip-calculator",
+  "version": "1.0.0",
+  "description": "SIP Calculator - Calculate Systematic Investment Plan returns",
+  "scripts": {
+    "start": "http-server -p 8081 -o",
+    "serve": "http-server -p 8081"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}
+
