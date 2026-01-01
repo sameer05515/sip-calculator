@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIP Calculator - Systematic Investment Plan</title>
+    <title>SIP & Lumpsum Calculator - Investment Calculator</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
@@ -12,25 +12,48 @@
         <!-- Header -->
         <div class="text-center mb-8">
             <h1 class="text-4xl font-bold text-gray-800 mb-2">
-                <span class="text-blue-600">📈</span> SIP Calculator
+                <span class="text-blue-600">📈</span> SIP & Lumpsum Calculator
             </h1>
-            <p class="text-gray-600">Calculate your Systematic Investment Plan returns</p>
+            <p class="text-gray-600">Calculate your investment returns</p>
+        </div>
+
+        <!-- Mode Toggle -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
+            <div class="flex justify-center">
+                <div class="inline-flex bg-gray-100 rounded-lg p-1">
+                    <button 
+                        @click="mode = 'sip'; calculate()"
+                        :class="mode === 'sip' ? 'bg-blue-600 text-white' : 'text-gray-700 hover:bg-gray-200'"
+                        class="px-6 py-3 rounded-lg font-semibold transition-all duration-200"
+                    >
+                        SIP
+                    </button>
+                    <button 
+                        @click="mode = 'lumpsum'; calculate()"
+                        :class="mode === 'lumpsum' ? 'bg-blue-600 text-white' : 'text-gray-700 hover:bg-gray-200'"
+                        class="px-6 py-3 rounded-lg font-semibold transition-all duration-200"
+                    >
+                        Lumpsum
+                    </button>
+                </div>
+            </div>
         </div>
 
         <!-- Main Card -->
         <div class="bg-white rounded-2xl shadow-xl p-8 mb-6">
             <!-- Input Form -->
             <div class="grid md:grid-cols-3 gap-6 mb-8">
-                <!-- Monthly SIP Amount -->
+                <!-- SIP: Monthly Amount / Lumpsum: One-time Amount -->
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">
-                        Monthly SIP Amount (₹)
+                        <span x-show="mode === 'sip'">Monthly SIP Amount (₹)</span>
+                        <span x-show="mode === 'lumpsum'">Lumpsum Amount (₹)</span>
                     </label>
                     <input 
                         type="number" 
-                        x-model="monthlyAmount" 
+                        x-model="mode === 'sip' ? monthlyAmount : lumpsumAmount" 
                         @input="calculate()"
-                        placeholder="5000"
+                        :placeholder="mode === 'sip' ? '5000' : '100000'"
                         min="0"
                         step="100"
                         class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-lg"
@@ -129,18 +152,38 @@
                 <div class="bg-gray-50 rounded-xl p-6 border-2 border-gray-200">
                     <h3 class="text-lg font-semibold text-gray-800 mb-4">Investment Breakdown</h3>
                     <div class="space-y-3">
-                        <div class="flex justify-between items-center">
-                            <span class="text-gray-600">Monthly Investment:</span>
-                            <span class="font-semibold text-gray-800">₹<span x-text="formatCurrency(monthlyAmount)"></span></span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-gray-600">Number of Months:</span>
-                            <span class="font-semibold text-gray-800" x-text="results.months"></span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-gray-600">Monthly Return Rate:</span>
-                            <span class="font-semibold text-gray-800" x-text="results.monthlyRate.toFixed(4)"></span>%
-                        </div>
+                        <template x-if="mode === 'sip'">
+                            <div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Monthly Investment:</span>
+                                    <span class="font-semibold text-gray-800">₹<span x-text="formatCurrency(monthlyAmount)"></span></span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Number of Months:</span>
+                                    <span class="font-semibold text-gray-800" x-text="results.months"></span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Monthly Return Rate:</span>
+                                    <span class="font-semibold text-gray-800" x-text="results.monthlyRate.toFixed(4)"></span>%
+                                </div>
+                            </div>
+                        </template>
+                        <template x-if="mode === 'lumpsum'">
+                            <div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Initial Investment:</span>
+                                    <span class="font-semibold text-gray-800">₹<span x-text="formatCurrency(lumpsumAmount)"></span></span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Investment Period:</span>
+                                    <span class="font-semibold text-gray-800" x-text="years + ' Years'"></span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Annual Return Rate:</span>
+                                    <span class="font-semibold text-gray-800" x-text="annualReturn.toFixed(2)"></span>%
+                                </div>
+                            </div>
+                        </template>
                         <div class="border-t border-gray-300 pt-3 mt-3">
                             <div class="flex justify-between items-center">
                                 <span class="text-gray-800 font-semibold">Total Invested:</span>
@@ -161,27 +204,44 @@
 
             <!-- Empty State -->
             <div x-show="results.totalValue === 0" class="text-center py-12 text-gray-400">
-                <p class="text-lg">Enter your SIP details above to see calculations</p>
+                <p class="text-lg">Enter your investment details above to see calculations</p>
             </div>
         </div>
 
         <!-- Info Card -->
         <div class="bg-white rounded-2xl shadow-lg p-6">
-            <h2 class="text-xl font-semibold text-gray-800 mb-4">About SIP Calculator</h2>
-            <div class="text-gray-600 space-y-2">
-                <p>
-                    A Systematic Investment Plan (SIP) is an investment strategy where you invest a fixed amount 
-                    regularly (typically monthly) in mutual funds or other investment instruments.
-                </p>
-                <p class="text-sm mt-4">
-                    <strong>Formula used:</strong> The calculator uses the future value of annuity formula:
-                    <code class="bg-gray-100 px-2 py-1 rounded text-xs">
-                        FV = P × [((1 + r)^n - 1) / r] × (1 + r)
-                    </code>
-                    where P = monthly investment, r = monthly return rate, n = number of months
-                </p>
-                <p class="text-sm text-gray-500 mt-4">
-                    <strong>Note:</strong> This is an estimate based on the expected return rate. Actual returns may vary 
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">About Investment Calculator</h2>
+            <div class="text-gray-600 space-y-4">
+                <div>
+                    <h3 class="font-semibold text-gray-800 mb-2">SIP (Systematic Investment Plan)</h3>
+                    <p>
+                        A Systematic Investment Plan (SIP) is an investment strategy where you invest a fixed amount 
+                        regularly (typically monthly) in mutual funds or other investment instruments.
+                    </p>
+                    <p class="text-sm mt-2">
+                        <strong>Formula used:</strong> The calculator uses the future value of annuity formula:
+                        <code class="bg-gray-100 px-2 py-1 rounded text-xs block mt-1">
+                            FV = P × [((1 + r)^n - 1) / r] × (1 + r)
+                        </code>
+                        where P = monthly investment, r = monthly return rate, n = number of months
+                    </p>
+                </div>
+                <div class="border-t border-gray-200 pt-4">
+                    <h3 class="font-semibold text-gray-800 mb-2">Lumpsum Investment</h3>
+                    <p>
+                        A lumpsum investment is a one-time investment where you invest a large amount at once, 
+                        which then grows over time through compound interest.
+                    </p>
+                    <p class="text-sm mt-2">
+                        <strong>Formula used:</strong> The calculator uses the compound interest formula:
+                        <code class="bg-gray-100 px-2 py-1 rounded text-xs block mt-1">
+                            FV = PV × (1 + r)^n
+                        </code>
+                        where PV = present value (initial investment), r = annual return rate, n = number of years
+                    </p>
+                </div>
+                <p class="text-sm text-gray-500 mt-4 border-t border-gray-200 pt-4">
+                    <strong>Note:</strong> These are estimates based on the expected return rate. Actual returns may vary 
                     based on market conditions and fund performance.
                 </p>
             </div>
@@ -191,7 +251,9 @@
     <script>
         function sipCalculator() {
             return {
+                mode: 'sip', // 'sip' or 'lumpsum'
                 monthlyAmount: 5000,
+                lumpsumAmount: 100000,
                 annualReturn: 12,
                 years: 10,
                 results: {
@@ -204,11 +266,25 @@
                 },
 
                 calculate() {
-                    const amount = parseFloat(this.monthlyAmount) || 0;
                     const annualRate = parseFloat(this.annualReturn) || 0;
                     const yearsValue = parseFloat(this.years) || 0;
 
-                    if (amount <= 0 || annualRate < 0 || yearsValue <= 0) {
+                    if (annualRate < 0 || yearsValue <= 0) {
+                        this.resetResults();
+                        return;
+                    }
+
+                    if (this.mode === 'sip') {
+                        this.calculateSIP(annualRate, yearsValue);
+                    } else {
+                        this.calculateLumpsum(annualRate, yearsValue);
+                    }
+                },
+
+                calculateSIP(annualRate, yearsValue) {
+                    const amount = parseFloat(this.monthlyAmount) || 0;
+
+                    if (amount <= 0) {
                         this.resetResults();
                         return;
                     }
@@ -242,6 +318,45 @@
                         returnPercentage: returnPercentage,
                         months: months,
                         monthlyRate: monthlyRate * 100
+                    };
+                },
+
+                calculateLumpsum(annualRate, yearsValue) {
+                    const amount = parseFloat(this.lumpsumAmount) || 0;
+
+                    if (amount <= 0) {
+                        this.resetResults();
+                        return;
+                    }
+
+                    // Calculate annual rate as decimal
+                    const annualRateDecimal = annualRate / 100;
+                    const months = yearsValue * 12;
+
+                    // Calculate total invested (same as initial amount for lumpsum)
+                    const totalInvested = amount;
+
+                    // Calculate future value using compound interest formula
+                    // FV = PV × (1 + r)^n
+                    let futureValue = 0;
+                    
+                    if (annualRateDecimal > 0) {
+                        futureValue = amount * Math.pow(1 + annualRateDecimal, yearsValue);
+                    } else {
+                        // If rate is 0, future value equals present value
+                        futureValue = totalInvested;
+                    }
+
+                    const estimatedReturns = futureValue - totalInvested;
+                    const returnPercentage = totalInvested > 0 ? (estimatedReturns / totalInvested) * 100 : 0;
+
+                    this.results = {
+                        totalValue: futureValue,
+                        totalInvested: totalInvested,
+                        estimatedReturns: estimatedReturns,
+                        returnPercentage: returnPercentage,
+                        months: months,
+                        monthlyRate: annualRate / 12 // For display purposes
                     };
                 },
 
