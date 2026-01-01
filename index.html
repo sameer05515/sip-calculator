@@ -4,33 +4,57 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SIP & Lumpsum Calculator - Investment Calculator</title>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module">
+        import { sipCalculator } from './js/app.js';
+        window.sipCalculator = sipCalculator;
+    </script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
-<body class="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 min-h-screen">
+<body class="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 min-h-screen transition-colors duration-300">
     <div x-data="sipCalculator()" class="container mx-auto px-4 py-8 max-w-4xl">
-        <!-- Header -->
-        <div class="text-center mb-8">
-            <h1 class="text-4xl font-bold text-gray-800 mb-2">
-                <span class="text-blue-600">📈</span> SIP & Lumpsum Calculator
-            </h1>
-            <p class="text-gray-600">Calculate your investment returns</p>
+        <!-- Header with Theme Toggle -->
+        <div class="relative mb-8">
+            <div class="text-center">
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-800 dark:text-gray-100 mb-2">
+                    <span class="text-blue-600 dark:text-blue-400">📈</span> SIP & Lumpsum Calculator
+                </h1>
+                <p class="text-gray-600 dark:text-gray-400">Calculate your investment returns</p>
+            </div>
+            <button 
+                @click="toggleThemeMode()"
+                class="absolute top-0 right-0 p-3 rounded-lg bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-200 border-2 border-gray-200 dark:border-gray-700"
+                :title="theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'"
+                aria-label="Toggle theme"
+            >
+                <svg x-show="theme === 'light'" class="w-6 h-6 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                </svg>
+                <svg x-show="theme === 'dark'" class="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                </svg>
+            </button>
         </div>
 
         <!-- Mode Toggle -->
-        <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 mb-6 transition-colors duration-300">
             <div class="flex justify-center">
-                <div class="inline-flex bg-gray-100 rounded-lg p-1">
+                <div class="inline-flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
                     <button 
                         @click="mode = 'sip'; calculate()"
-                        :class="mode === 'sip' ? 'bg-blue-600 text-white' : 'text-gray-700 hover:bg-gray-200'"
+                        :class="mode === 'sip' ? 'bg-blue-600 dark:bg-blue-500 text-white' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'"
                         class="px-6 py-3 rounded-lg font-semibold transition-all duration-200"
                     >
                         SIP
                     </button>
                     <button 
                         @click="mode = 'lumpsum'; calculate()"
-                        :class="mode === 'lumpsum' ? 'bg-blue-600 text-white' : 'text-gray-700 hover:bg-gray-200'"
+                        :class="mode === 'lumpsum' ? 'bg-blue-600 dark:bg-blue-500 text-white' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'"
                         class="px-6 py-3 rounded-lg font-semibold transition-all duration-200"
                     >
                         Lumpsum
@@ -40,12 +64,12 @@
         </div>
 
         <!-- Main Card -->
-        <div class="bg-white rounded-2xl shadow-xl p-8 mb-6">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 mb-6 transition-colors duration-300">
             <!-- Input Form -->
             <div class="grid md:grid-cols-3 gap-6 mb-8">
                 <!-- SIP: Monthly Amount / Lumpsum: One-time Amount -->
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                         <span x-show="mode === 'sip'">Monthly SIP Amount (₹)</span>
                         <span x-show="mode === 'lumpsum'">Lumpsum Amount (₹)</span>
                     </label>
@@ -56,13 +80,13 @@
                         :placeholder="mode === 'sip' ? '5000' : '100000'"
                         min="0"
                         step="100"
-                        class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-lg"
+                        class="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
                     >
                 </div>
 
                 <!-- Expected Annual Return -->
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                         Expected Annual Return (%)
                     </label>
                     <input 
@@ -73,13 +97,13 @@
                         min="0"
                         max="100"
                         step="0.1"
-                        class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-lg"
+                        class="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
                     >
                 </div>
 
                 <!-- Investment Period -->
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                         Investment Period (Years)
                     </label>
                     <input 
@@ -90,7 +114,7 @@
                         min="1"
                         max="50"
                         step="1"
-                        class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-lg"
+                        class="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
                     >
                 </div>
             </div>
@@ -103,7 +127,7 @@
                  class="space-y-4">
                 
                 <!-- Total Value Card -->
-                <div class="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl p-6 text-white">
+                <div class="bg-gradient-to-r from-blue-500 to-indigo-600 dark:from-blue-600 dark:to-indigo-700 rounded-xl p-6 text-white">
                     <div class="text-center">
                         <p class="text-lg font-semibold mb-2">Total Value</p>
                         <p class="text-5xl font-bold mb-2">
@@ -118,30 +142,30 @@
                 <!-- Stats Grid -->
                 <div class="grid md:grid-cols-3 gap-4">
                     <!-- Total Invested -->
-                    <div class="bg-gray-50 rounded-xl p-6 border-2 border-gray-200">
+                    <div class="bg-gray-50 dark:bg-gray-700 rounded-xl p-6 border-2 border-gray-200 dark:border-gray-600 transition-colors duration-300">
                         <div class="text-center">
-                            <p class="text-sm font-semibold text-gray-600 mb-2">Total Invested</p>
-                            <p class="text-3xl font-bold text-gray-800">
+                            <p class="text-sm font-semibold text-gray-600 dark:text-gray-300 mb-2">Total Invested</p>
+                            <p class="text-3xl font-bold text-gray-800 dark:text-gray-100">
                                 ₹<span x-text="formatCurrency(results.totalInvested)"></span>
                             </p>
                         </div>
                     </div>
 
                     <!-- Estimated Returns -->
-                    <div class="bg-green-50 rounded-xl p-6 border-2 border-green-200">
+                    <div class="bg-green-50 dark:bg-green-900/30 rounded-xl p-6 border-2 border-green-200 dark:border-green-700 transition-colors duration-300">
                         <div class="text-center">
-                            <p class="text-sm font-semibold text-green-700 mb-2">Estimated Returns</p>
-                            <p class="text-3xl font-bold text-green-800">
+                            <p class="text-sm font-semibold text-green-700 dark:text-green-400 mb-2">Estimated Returns</p>
+                            <p class="text-3xl font-bold text-green-800 dark:text-green-400">
                                 ₹<span x-text="formatCurrency(results.estimatedReturns)"></span>
                             </p>
                         </div>
                     </div>
 
                     <!-- Return Percentage -->
-                    <div class="bg-blue-50 rounded-xl p-6 border-2 border-blue-200">
+                    <div class="bg-blue-50 dark:bg-blue-900/30 rounded-xl p-6 border-2 border-blue-200 dark:border-blue-700 transition-colors duration-300">
                         <div class="text-center">
-                            <p class="text-sm font-semibold text-blue-700 mb-2">Return %</p>
-                            <p class="text-3xl font-bold text-blue-800">
+                            <p class="text-sm font-semibold text-blue-700 dark:text-blue-400 mb-2">Return %</p>
+                            <p class="text-3xl font-bold text-blue-800 dark:text-blue-400">
                                 <span x-text="results.returnPercentage.toFixed(2)"></span>%
                             </p>
                         </div>
@@ -149,53 +173,53 @@
                 </div>
 
                 <!-- Breakdown -->
-                <div class="bg-gray-50 rounded-xl p-6 border-2 border-gray-200">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Investment Breakdown</h3>
+                <div class="bg-gray-50 dark:bg-gray-700 rounded-xl p-6 border-2 border-gray-200 dark:border-gray-600 transition-colors duration-300">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">Investment Breakdown</h3>
                     <div class="space-y-3">
                         <template x-if="mode === 'sip'">
                             <div>
                                 <div class="flex justify-between items-center">
-                                    <span class="text-gray-600">Monthly Investment:</span>
-                                    <span class="font-semibold text-gray-800">₹<span x-text="formatCurrency(monthlyAmount)"></span></span>
+                                    <span class="text-gray-600 dark:text-gray-400">Monthly Investment:</span>
+                                    <span class="font-semibold text-gray-800 dark:text-gray-100">₹<span x-text="formatCurrency(monthlyAmount)"></span></span>
                                 </div>
                                 <div class="flex justify-between items-center">
-                                    <span class="text-gray-600">Number of Months:</span>
-                                    <span class="font-semibold text-gray-800" x-text="results.months"></span>
+                                    <span class="text-gray-600 dark:text-gray-400">Number of Months:</span>
+                                    <span class="font-semibold text-gray-800 dark:text-gray-100" x-text="results.months"></span>
                                 </div>
                                 <div class="flex justify-between items-center">
-                                    <span class="text-gray-600">Monthly Return Rate:</span>
-                                    <span class="font-semibold text-gray-800" x-text="results.monthlyRate.toFixed(4)"></span>%
+                                    <span class="text-gray-600 dark:text-gray-400">Monthly Return Rate:</span>
+                                    <span class="font-semibold text-gray-800 dark:text-gray-100" x-text="results.monthlyRate.toFixed(4)"></span>%
                                 </div>
                             </div>
                         </template>
                         <template x-if="mode === 'lumpsum'">
                             <div>
                                 <div class="flex justify-between items-center">
-                                    <span class="text-gray-600">Initial Investment:</span>
-                                    <span class="font-semibold text-gray-800">₹<span x-text="formatCurrency(lumpsumAmount)"></span></span>
+                                    <span class="text-gray-600 dark:text-gray-400">Initial Investment:</span>
+                                    <span class="font-semibold text-gray-800 dark:text-gray-100">₹<span x-text="formatCurrency(lumpsumAmount)"></span></span>
                                 </div>
                                 <div class="flex justify-between items-center">
-                                    <span class="text-gray-600">Investment Period:</span>
-                                    <span class="font-semibold text-gray-800" x-text="years + ' Years'"></span>
+                                    <span class="text-gray-600 dark:text-gray-400">Investment Period:</span>
+                                    <span class="font-semibold text-gray-800 dark:text-gray-100" x-text="years + ' Years'"></span>
                                 </div>
                                 <div class="flex justify-between items-center">
-                                    <span class="text-gray-600">Annual Return Rate:</span>
-                                    <span class="font-semibold text-gray-800" x-text="annualReturn.toFixed(2)"></span>%
+                                    <span class="text-gray-600 dark:text-gray-400">Annual Return Rate:</span>
+                                    <span class="font-semibold text-gray-800 dark:text-gray-100" x-text="annualReturn.toFixed(2)"></span>%
                                 </div>
                             </div>
                         </template>
-                        <div class="border-t border-gray-300 pt-3 mt-3">
+                        <div class="border-t border-gray-300 dark:border-gray-600 pt-3 mt-3">
                             <div class="flex justify-between items-center">
-                                <span class="text-gray-800 font-semibold">Total Invested:</span>
-                                <span class="font-bold text-gray-900">₹<span x-text="formatCurrency(results.totalInvested)"></span></span>
+                                <span class="text-gray-800 dark:text-gray-200 font-semibold">Total Invested:</span>
+                                <span class="font-bold text-gray-900 dark:text-gray-100">₹<span x-text="formatCurrency(results.totalInvested)"></span></span>
                             </div>
                             <div class="flex justify-between items-center mt-2">
-                                <span class="text-gray-800 font-semibold">Wealth Gained:</span>
-                                <span class="font-bold text-green-700">₹<span x-text="formatCurrency(results.estimatedReturns)"></span></span>
+                                <span class="text-gray-800 dark:text-gray-200 font-semibold">Wealth Gained:</span>
+                                <span class="font-bold text-green-700 dark:text-green-400">₹<span x-text="formatCurrency(results.estimatedReturns)"></span></span>
                             </div>
                             <div class="flex justify-between items-center mt-2">
-                                <span class="text-gray-800 font-semibold">Maturity Amount:</span>
-                                <span class="font-bold text-blue-700">₹<span x-text="formatCurrency(results.totalValue)"></span></span>
+                                <span class="text-gray-800 dark:text-gray-200 font-semibold">Maturity Amount:</span>
+                                <span class="font-bold text-blue-700 dark:text-blue-400">₹<span x-text="formatCurrency(results.totalValue)"></span></span>
                             </div>
                         </div>
                     </div>
@@ -203,229 +227,50 @@
             </div>
 
             <!-- Empty State -->
-            <div x-show="results.totalValue === 0" class="text-center py-12 text-gray-400">
+            <div x-show="results.totalValue === 0" class="text-center py-12 text-gray-400 dark:text-gray-500">
                 <p class="text-lg">Enter your investment details above to see calculations</p>
             </div>
         </div>
 
         <!-- Info Card -->
-        <div class="bg-white rounded-2xl shadow-lg p-6">
-            <h2 class="text-xl font-semibold text-gray-800 mb-4">About Investment Calculator</h2>
-            <div class="text-gray-600 space-y-4">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 transition-colors duration-300">
+            <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">About Investment Calculator</h2>
+            <div class="text-gray-600 dark:text-gray-300 space-y-4">
                 <div>
-                    <h3 class="font-semibold text-gray-800 mb-2">SIP (Systematic Investment Plan)</h3>
+                    <h3 class="font-semibold text-gray-800 dark:text-gray-100 mb-2">SIP (Systematic Investment Plan)</h3>
                     <p>
                         A Systematic Investment Plan (SIP) is an investment strategy where you invest a fixed amount 
                         regularly (typically monthly) in mutual funds or other investment instruments.
                     </p>
                     <p class="text-sm mt-2">
                         <strong>Formula used:</strong> The calculator uses the future value of annuity formula:
-                        <code class="bg-gray-100 px-2 py-1 rounded text-xs block mt-1">
+                        <code class="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded text-xs block mt-1 text-gray-800 dark:text-gray-200">
                             FV = P × [((1 + r)^n - 1) / r] × (1 + r)
                         </code>
                         where P = monthly investment, r = monthly return rate, n = number of months
                     </p>
                 </div>
-                <div class="border-t border-gray-200 pt-4">
-                    <h3 class="font-semibold text-gray-800 mb-2">Lumpsum Investment</h3>
+                <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
+                    <h3 class="font-semibold text-gray-800 dark:text-gray-100 mb-2">Lumpsum Investment</h3>
                     <p>
                         A lumpsum investment is a one-time investment where you invest a large amount at once, 
                         which then grows over time through compound interest.
                     </p>
                     <p class="text-sm mt-2">
                         <strong>Formula used:</strong> The calculator uses the compound interest formula:
-                        <code class="bg-gray-100 px-2 py-1 rounded text-xs block mt-1">
+                        <code class="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded text-xs block mt-1 text-gray-800 dark:text-gray-200">
                             FV = PV × (1 + r)^n
                         </code>
                         where PV = present value (initial investment), r = annual return rate, n = number of years
                     </p>
                 </div>
-                <p class="text-sm text-gray-500 mt-4 border-t border-gray-200 pt-4">
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-4 border-t border-gray-200 dark:border-gray-700 pt-4">
                     <strong>Note:</strong> These are estimates based on the expected return rate. Actual returns may vary 
                     based on market conditions and fund performance.
                 </p>
             </div>
         </div>
     </div>
-
-    <script>
-        function sipCalculator() {
-            return {
-                mode: 'sip', // 'sip' or 'lumpsum'
-                monthlyAmount: 5000,
-                lumpsumAmount: 100000,
-                annualReturn: 12,
-                years: 10,
-                results: {
-                    totalValue: 0,
-                    totalInvested: 0,
-                    estimatedReturns: 0,
-                    returnPercentage: 0,
-                    months: 0,
-                    monthlyRate: 0
-                },
-
-                calculate() {
-                    const annualRate = parseFloat(this.annualReturn) || 0;
-                    const yearsValue = parseFloat(this.years) || 0;
-
-                    if (annualRate < 0 || yearsValue <= 0) {
-                        this.resetResults();
-                        return;
-                    }
-
-                    if (this.mode === 'sip') {
-                        this.calculateSIP(annualRate, yearsValue);
-                    } else {
-                        this.calculateLumpsum(annualRate, yearsValue);
-                    }
-                },
-
-                calculateSIP(annualRate, yearsValue) {
-                    const amount = parseFloat(this.monthlyAmount) || 0;
-
-                    if (amount <= 0) {
-                        this.resetResults();
-                        return;
-                    }
-
-                    // Calculate monthly rate
-                    const monthlyRate = annualRate / 12 / 100;
-                    const months = yearsValue * 12;
-
-                    // Calculate total invested
-                    const totalInvested = amount * months;
-
-                    // Calculate future value using SIP formula
-                    // FV = P × [((1 + r)^n - 1) / r] × (1 + r)
-                    let futureValue = 0;
-                    
-                    if (monthlyRate > 0) {
-                        const compoundFactor = Math.pow(1 + monthlyRate, months);
-                        futureValue = amount * ((compoundFactor - 1) / monthlyRate) * (1 + monthlyRate);
-                    } else {
-                        // If rate is 0, it's just the sum of all investments
-                        futureValue = totalInvested;
-                    }
-
-                    const estimatedReturns = futureValue - totalInvested;
-                    const returnPercentage = totalInvested > 0 ? (estimatedReturns / totalInvested) * 100 : 0;
-
-                    this.results = {
-                        totalValue: futureValue,
-                        totalInvested: totalInvested,
-                        estimatedReturns: estimatedReturns,
-                        returnPercentage: returnPercentage,
-                        months: months,
-                        monthlyRate: monthlyRate * 100
-                    };
-                },
-
-                calculateLumpsum(annualRate, yearsValue) {
-                    const amount = parseFloat(this.lumpsumAmount) || 0;
-
-                    if (amount <= 0) {
-                        this.resetResults();
-                        return;
-                    }
-
-                    // Calculate annual rate as decimal
-                    const annualRateDecimal = annualRate / 100;
-                    const months = yearsValue * 12;
-
-                    // Calculate total invested (same as initial amount for lumpsum)
-                    const totalInvested = amount;
-
-                    // Calculate future value using compound interest formula
-                    // FV = PV × (1 + r)^n
-                    let futureValue = 0;
-                    
-                    if (annualRateDecimal > 0) {
-                        futureValue = amount * Math.pow(1 + annualRateDecimal, yearsValue);
-                    } else {
-                        // If rate is 0, future value equals present value
-                        futureValue = totalInvested;
-                    }
-
-                    const estimatedReturns = futureValue - totalInvested;
-                    const returnPercentage = totalInvested > 0 ? (estimatedReturns / totalInvested) * 100 : 0;
-
-                    this.results = {
-                        totalValue: futureValue,
-                        totalInvested: totalInvested,
-                        estimatedReturns: estimatedReturns,
-                        returnPercentage: returnPercentage,
-                        months: months,
-                        monthlyRate: annualRate / 12 // For display purposes
-                    };
-                },
-
-                resetResults() {
-                    this.results = {
-                        totalValue: 0,
-                        totalInvested: 0,
-                        estimatedReturns: 0,
-                        returnPercentage: 0,
-                        months: 0,
-                        monthlyRate: 0
-                    };
-                },
-
-                formatCurrency(num) {
-                    if (num === null || num === undefined || isNaN(num)) return '0';
-                    return parseFloat(num).toLocaleString('en-IN', { 
-                        minimumFractionDigits: 0, 
-                        maximumFractionDigits: 0 
-                    });
-                },
-
-                numberToWords(num) {
-                    if (num === null || num === undefined || isNaN(num) || num === 0) {
-                        return 'Zero Rupees';
-                    }
-
-                    const numValue = Math.floor(parseFloat(num));
-                    const parts = [];
-
-                    // Calculate Crore
-                    const crore = Math.floor(numValue / 10000000);
-                    if (crore > 0) {
-                        parts.push(crore === 1 ? '1 Crore' : `${crore} Crore`);
-                    }
-
-                    // Calculate Lakh (remaining after crore)
-                    const remainingAfterCrore = numValue % 10000000;
-                    const lakh = Math.floor(remainingAfterCrore / 100000);
-                    if (lakh > 0) {
-                        parts.push(lakh === 1 ? '1 Lakh' : `${lakh} Lakh`);
-                    }
-
-                    // Calculate Thousand (remaining after lakh)
-                    const remainingAfterLakh = remainingAfterCrore % 100000;
-                    const thousand = Math.floor(remainingAfterLakh / 1000);
-                    if (thousand > 0) {
-                        parts.push(thousand === 1 ? '1 Thousand' : `${thousand} Thousand`);
-                    }
-
-                    // Calculate remaining hundreds
-                    const remaining = remainingAfterLakh % 1000;
-                    if (remaining > 0) {
-                        parts.push(remaining.toString());
-                    }
-
-                    if (parts.length === 0) {
-                        return 'Zero Rupees';
-                    }
-
-                    return parts.join(' ') + ' Rupees';
-                },
-
-                init() {
-                    this.calculate();
-                }
-            }
-        }
-    </script>
 </body>
 </html>
 
