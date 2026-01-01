@@ -32,9 +32,9 @@ export function getInitialTheme() {
 export function applyTheme(theme) {
     const html = document.documentElement;
     if (theme === THEME_DARK) {
-        html.classList.add('dark');
+        html.setAttribute('data-theme', 'dark');
     } else {
-        html.classList.remove('dark');
+        html.setAttribute('data-theme', 'light');
     }
     localStorage.setItem(THEME_STORAGE_KEY, theme);
 }

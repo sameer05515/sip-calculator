@@ -1,0 +1,252 @@
+/**
+ * Custom CSS for Investment Calculator
+ * Includes dark mode support and additional styling
+ */
+
+:root,
+[data-theme="light"] {
+    --bg-gradient-start: #eff6ff;
+    --bg-gradient-mid: #eef2ff;
+    --bg-gradient-end: #f3e8ff;
+    --card-bg: #ffffff;
+    --text-primary: #1f2937;
+    --text-secondary: #4b5563;
+    --border-color: #e5e7eb;
+    --input-bg: #ffffff;
+    --input-border: #d1d5db;
+}
+
+[data-theme="dark"] {
+    --bg-gradient-start: #111827;
+    --bg-gradient-mid: #1f2937;
+    --bg-gradient-end: #111827;
+    --card-bg: #1f2937;
+    --text-primary: #f9fafb;
+    --text-secondary: #d1d5db;
+    --border-color: #374151;
+    --input-bg: #374151;
+    --input-border: #4b5563;
+}
+
+body {
+    background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-mid) 50%, var(--bg-gradient-end) 100%);
+    min-height: 100vh;
+    transition: background 0.3s ease;
+}
+
+.theme-toggle-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.theme-toggle-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+[data-theme="dark"] .theme-toggle-btn {
+    background: var(--card-bg);
+    border-color: var(--border-color);
+}
+
+.card-custom {
+    background: var(--card-bg);
+    border: none;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-custom .form-label,
+.form-label-custom {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.form-control-custom {
+    background: var(--input-bg);
+    border: 2px solid var(--input-border);
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+}
+
+.form-control-custom:focus {
+    background: var(--input-bg);
+    border-color: #0d6efd;
+    color: var(--text-primary);
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+[data-theme="dark"] .form-control-custom::placeholder {
+    color: #9ca3af;
+}
+
+.mode-toggle-group {
+    background: #f3f4f6;
+    border-radius: 0.5rem;
+    padding: 0.25rem;
+    display: inline-flex;
+}
+
+[data-theme="dark"] .mode-toggle-group {
+    background: #374151;
+}
+
+.mode-toggle-btn {
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    background: transparent;
+    color: var(--text-primary);
+}
+
+.mode-toggle-btn.active {
+    background: #0d6efd;
+    color: white;
+}
+
+[data-theme="dark"] .mode-toggle-btn.active {
+    background: #3b82f6;
+}
+
+.mode-toggle-btn:not(.active):hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"] .mode-toggle-btn:not(.active):hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.total-value-card {
+    background: linear-gradient(135deg, #3b82f6 0%, #4f46e5 100%);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    color: white;
+}
+
+[data-theme="dark"] .total-value-card {
+    background: linear-gradient(135deg, #2563eb 0%, #4338ca 100%);
+}
+
+.stats-card {
+    border: 2px solid var(--border-color);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    background: var(--card-bg);
+    transition: all 0.3s ease;
+}
+
+.stats-card.total-invested {
+    background: #f9fafb;
+}
+
+[data-theme="dark"] .stats-card.total-invested {
+    background: #374151;
+}
+
+.stats-card.estimated-returns {
+    background: #f0fdf4;
+    border-color: #86efac;
+}
+
+.stats-card.estimated-returns .text-success {
+    color: #15803d !important;
+}
+
+[data-theme="dark"] .stats-card.estimated-returns {
+    background: rgba(34, 197, 94, 0.1);
+    border-color: #4ade80;
+}
+
+[data-theme="dark"] .stats-card.estimated-returns .text-success {
+    color: #4ade80 !important;
+}
+
+.stats-card.return-percentage {
+    background: #eff6ff;
+    border-color: #93c5fd;
+}
+
+.stats-card.return-percentage .text-primary {
+    color: #1e40af !important;
+}
+
+[data-theme="dark"] .stats-card.return-percentage {
+    background: rgba(59, 130, 246, 0.1);
+    border-color: #60a5fa;
+}
+
+[data-theme="dark"] .stats-card.return-percentage .text-primary {
+    color: #60a5fa !important;
+}
+
+.breakdown-card {
+    background: #f9fafb;
+    border: 2px solid var(--border-color);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+}
+
+[data-theme="dark"] .breakdown-card {
+    background: #374151;
+    border-color: var(--border-color);
+}
+
+.text-muted-custom {
+    color: var(--text-secondary);
+}
+
+.text-primary-custom {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .text-success {
+    color: #4ade80 !important;
+}
+
+[data-theme="dark"] .text-primary {
+    color: #60a5fa !important;
+}
+
+[data-theme="dark"] .text-muted {
+    color: #9ca3af !important;
+}
+
+.empty-state {
+    color: var(--text-secondary);
+    padding: 3rem 0;
+}
+
+.code-block {
+    background: #f3f4f6;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    display: block;
+    margin-top: 0.5rem;
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .code-block {
+    background: #374151;
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
