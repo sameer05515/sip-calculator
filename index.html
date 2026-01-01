@@ -72,11 +72,24 @@
                             <span x-show="mode === 'sip'">Monthly SIP Amount (₹)</span>
                             <span x-show="mode === 'lumpsum'">Lumpsum Amount (₹)</span>
                         </label>
+                        <!-- SIP Input -->
                         <input 
+                            x-show="mode === 'sip'"
                             type="number" 
-                            x-model="mode === 'sip' ? monthlyAmount : lumpsumAmount" 
+                            x-model="monthlyAmount" 
                             @input="calculate()"
-                            :placeholder="mode === 'sip' ? '5000' : '100000'"
+                            placeholder="5000"
+                            min="0"
+                            step="100"
+                            class="form-control form-control-custom form-control-lg"
+                        >
+                        <!-- Lumpsum Input -->
+                        <input 
+                            x-show="mode === 'lumpsum'"
+                            type="number" 
+                            x-model="lumpsumAmount" 
+                            @input="calculate()"
+                            placeholder="100000"
                             min="0"
                             step="100"
                             class="form-control form-control-custom form-control-lg"
